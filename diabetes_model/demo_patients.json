@@ -1,0 +1,332 @@
+{
+  "Priya": {
+    "prediction": "High Risk",
+    "risk_level": "Critical",
+    "risk_probability": 100.0,
+    "threshold_used": 0.3,
+    "contributions": [
+      {
+        "feature": "HbA1c Level",
+        "original_value": 7.2,
+        "shap_value": 9.1685,
+        "impact": "increases risk",
+        "magnitude": 9.1685
+      },
+      {
+        "feature": "Age",
+        "original_value": 52,
+        "shap_value": -0.1911,
+        "impact": "decreases risk",
+        "magnitude": 0.1911
+      },
+      {
+        "feature": "Hypertension",
+        "original_value": "Yes",
+        "shap_value": 0.1883,
+        "impact": "increases risk",
+        "magnitude": 0.1883
+      },
+      {
+        "feature": "BMI",
+        "original_value": 33.5,
+        "shap_value": 0.1135,
+        "impact": "increases risk",
+        "magnitude": 0.1135
+      },
+      {
+        "feature": "Blood Glucose",
+        "original_value": 200,
+        "shap_value": -0.0916,
+        "impact": "decreases risk",
+        "magnitude": 0.0916
+      },
+      {
+        "feature": "Heart Disease",
+        "original_value": "No",
+        "shap_value": -0.0275,
+        "impact": "decreases risk",
+        "magnitude": 0.0275
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Female",
+        "shap_value": -0.0258,
+        "impact": "decreases risk",
+        "magnitude": 0.0258
+      },
+      {
+        "feature": "Smoking History",
+        "original_value": "former",
+        "shap_value": -0.0031,
+        "impact": "decreases risk",
+        "magnitude": 0.0031
+      }
+    ],
+    "top_factor": "HbA1c Level",
+    "top_factor_value": 7.2
+  },
+  "Rahul": {
+    "prediction": "Low Risk",
+    "risk_level": "Low",
+    "risk_probability": 0.0,
+    "threshold_used": 0.3,
+    "contributions": [
+      {
+        "feature": "HbA1c Level",
+        "original_value": 4.8,
+        "shap_value": -5.9613,
+        "impact": "decreases risk",
+        "magnitude": 5.9613
+      },
+      {
+        "feature": "Blood Glucose",
+        "original_value": 90,
+        "shap_value": -4.4194,
+        "impact": "decreases risk",
+        "magnitude": 4.4194
+      },
+      {
+        "feature": "BMI",
+        "original_value": 22.1,
+        "shap_value": -0.1668,
+        "impact": "decreases risk",
+        "magnitude": 0.1668
+      },
+      {
+        "feature": "Heart Disease",
+        "original_value": "No",
+        "shap_value": -0.0768,
+        "impact": "decreases risk",
+        "magnitude": 0.0768
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Male",
+        "shap_value": 0.0698,
+        "impact": "increases risk",
+        "magnitude": 0.0698
+      },
+      {
+        "feature": "Hypertension",
+        "original_value": "No",
+        "shap_value": -0.0659,
+        "impact": "decreases risk",
+        "magnitude": 0.0659
+      },
+      {
+        "feature": "Age",
+        "original_value": 28,
+        "shap_value": -0.0646,
+        "impact": "decreases risk",
+        "magnitude": 0.0646
+      },
+      {
+        "feature": "Smoking History",
+        "original_value": "never",
+        "shap_value": 0.0128,
+        "impact": "increases risk",
+        "magnitude": 0.0128
+      }
+    ],
+    "top_factor": "HbA1c Level",
+    "top_factor_value": 4.8
+  },
+  "Meena": {
+    "prediction": "High Risk",
+    "risk_level": "Moderate",
+    "risk_probability": 31.8,
+    "threshold_used": 0.3,
+    "contributions": [
+      {
+        "feature": "HbA1c Level",
+        "original_value": 5.8,
+        "shap_value": -0.598,
+        "impact": "decreases risk",
+        "magnitude": 0.598
+      },
+      {
+        "feature": "Hypertension",
+        "original_value": "Yes",
+        "shap_value": 0.4067,
+        "impact": "increases risk",
+        "magnitude": 0.4067
+      },
+      {
+        "feature": "BMI",
+        "original_value": 34.0,
+        "shap_value": 0.3853,
+        "impact": "increases risk",
+        "magnitude": 0.3853
+      },
+      {
+        "feature": "Blood Glucose",
+        "original_value": 200,
+        "shap_value": 0.1443,
+        "impact": "increases risk",
+        "magnitude": 0.1443
+      },
+      {
+        "feature": "Age",
+        "original_value": 55,
+        "shap_value": 0.1442,
+        "impact": "increases risk",
+        "magnitude": 0.1442
+      },
+      {
+        "feature": "Smoking History",
+        "original_value": "current",
+        "shap_value": 0.0962,
+        "impact": "increases risk",
+        "magnitude": 0.0962
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Female",
+        "shap_value": -0.0486,
+        "impact": "decreases risk",
+        "magnitude": 0.0486
+      },
+      {
+        "feature": "Heart Disease",
+        "original_value": "No",
+        "shap_value": -0.0318,
+        "impact": "decreases risk",
+        "magnitude": 0.0318
+      }
+    ],
+    "top_factor": "HbA1c Level",
+    "top_factor_value": 5.8
+  },
+  "Suresh": {
+    "prediction": "High Risk",
+    "risk_level": "Critical",
+    "risk_probability": 100.0,
+    "threshold_used": 0.3,
+    "contributions": [
+      {
+        "feature": "HbA1c Level",
+        "original_value": 8.5,
+        "shap_value": 6.353,
+        "impact": "increases risk",
+        "magnitude": 6.353
+      },
+      {
+        "feature": "Blood Glucose",
+        "original_value": 240,
+        "shap_value": 5.7987,
+        "impact": "increases risk",
+        "magnitude": 5.7987
+      },
+      {
+        "feature": "Hypertension",
+        "original_value": "Yes",
+        "shap_value": 0.1994,
+        "impact": "increases risk",
+        "magnitude": 0.1994
+      },
+      {
+        "feature": "BMI",
+        "original_value": 35.0,
+        "shap_value": 0.1866,
+        "impact": "increases risk",
+        "magnitude": 0.1866
+      },
+      {
+        "feature": "Heart Disease",
+        "original_value": "Yes",
+        "shap_value": 0.143,
+        "impact": "increases risk",
+        "magnitude": 0.143
+      },
+      {
+        "feature": "Age",
+        "original_value": 60,
+        "shap_value": 0.0917,
+        "impact": "increases risk",
+        "magnitude": 0.0917
+      },
+      {
+        "feature": "Smoking History",
+        "original_value": "current",
+        "shap_value": -0.0225,
+        "impact": "decreases risk",
+        "magnitude": 0.0225
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Male",
+        "shap_value": -0.0097,
+        "impact": "decreases risk",
+        "magnitude": 0.0097
+      }
+    ],
+    "top_factor": "HbA1c Level",
+    "top_factor_value": 8.5
+  },
+  "Ananya": {
+    "prediction": "Low Risk",
+    "risk_level": "Low",
+    "risk_probability": 0.0,
+    "threshold_used": 0.3,
+    "contributions": [
+      {
+        "feature": "HbA1c Level",
+        "original_value": 4.9,
+        "shap_value": -5.9828,
+        "impact": "decreases risk",
+        "magnitude": 5.9828
+      },
+      {
+        "feature": "Blood Glucose",
+        "original_value": 95,
+        "shap_value": -4.8091,
+        "impact": "decreases risk",
+        "magnitude": 4.8091
+      },
+      {
+        "feature": "Age",
+        "original_value": 32,
+        "shap_value": -0.4066,
+        "impact": "decreases risk",
+        "magnitude": 0.4066
+      },
+      {
+        "feature": "BMI",
+        "original_value": 34.0,
+        "shap_value": 0.1697,
+        "impact": "increases risk",
+        "magnitude": 0.1697
+      },
+      {
+        "feature": "Smoking History",
+        "original_value": "never",
+        "shap_value": 0.0825,
+        "impact": "increases risk",
+        "magnitude": 0.0825
+      },
+      {
+        "feature": "Heart Disease",
+        "original_value": "No",
+        "shap_value": -0.0787,
+        "impact": "decreases risk",
+        "magnitude": 0.0787
+      },
+      {
+        "feature": "Hypertension",
+        "original_value": "No",
+        "shap_value": -0.0415,
+        "impact": "decreases risk",
+        "magnitude": 0.0415
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Female",
+        "shap_value": 0.0279,
+        "impact": "increases risk",
+        "magnitude": 0.0279
+      }
+    ],
+    "top_factor": "HbA1c Level",
+    "top_factor_value": 4.9
+  }
+}

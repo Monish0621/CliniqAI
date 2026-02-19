@@ -1,0 +1,1 @@
+# CliniqAI Backend Application

@@ -1,0 +1,65 @@
+{
+  "optimal_threshold": 0.3,
+  "feature_cols": [
+    "gender_encoded",
+    "age",
+    "hypertension",
+    "heart_disease",
+    "smoking_history_encoded",
+    "bmi",
+    "HbA1c_level",
+    "blood_glucose_level"
+  ],
+  "scale_cols": [
+    "age",
+    "bmi",
+    "HbA1c_level",
+    "blood_glucose_level"
+  ],
+  "feature_names_display": [
+    "Gender",
+    "Age",
+    "Hypertension",
+    "Heart Disease",
+    "Smoking History",
+    "BMI",
+    "HbA1c Level",
+    "Blood Glucose"
+  ],
+  "model_performance": {
+    "accuracy": 95.06,
+    "auc": 0.9741,
+    "recall": 78.21,
+    "precision": 74.49,
+    "threshold": 0.3,
+    "training_samples": 82781,
+    "dataset": "Diabetes Prediction Dataset \u2014 100K patients"
+  },
+  "gender_map": {
+    "Female": 0,
+    "Male": 1,
+    "Other": 2
+  },
+  "smoking_map": {
+    "never": 0,
+    "not current": 1,
+    "ever": 2,
+    "former": 3,
+    "current": 4,
+    "unknown": -1
+  },
+  "risk_levels": {
+    "Low": "0-30%",
+    "Moderate": "30-50%",
+    "High": "50-70%",
+    "Critical": "70-100%"
+  },
+  "clinical_thresholds": {
+    "HbA1c_normal": 5.7,
+    "HbA1c_prediabetic": 6.4,
+    "HbA1c_diabetic": 6.5,
+    "blood_glucose_normal": 100,
+    "blood_glucose_prediabetic": 125,
+    "blood_glucose_diabetic": 126
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "optimal_threshold": 0.4,
+  "feature_cols": [
+    "age",
+    "gender",
+    "ap_hi",
+    "ap_lo",
+    "smoke",
+    "alco",
+    "active",
+    "bmi"
+  ],
+  "scale_cols": [
+    "age",
+    "ap_hi",
+    "ap_lo",
+    "bmi"
+  ],
+  "feature_names_display": [
+    "Age",
+    "Gender",
+    "Systolic BP",
+    "Diastolic BP",
+    "Smoking",
+    "Alcohol",
+    "Physical Activity",
+    "BMI"
+  ],
+  "model_performance": {
+    "accuracy": 73.26,
+    "auc": 0.7969,
+    "threshold": 0.4,
+    "training_samples": 68000,
+    "dataset": "Cardiovascular Disease Dataset \u2014 68K patients"
+  },
+  "gender_map": {
+    "1": "Female",
+    "2": "Male"
+  },
+  "clinical_thresholds": {
+    "systolic_normal": 120,
+    "systolic_high": 130,
+    "diastolic_normal": 80
+  }
+}

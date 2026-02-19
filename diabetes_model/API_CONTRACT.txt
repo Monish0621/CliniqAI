@@ -1,0 +1,96 @@
+
+╔══════════════════════════════════════════════════════╗
+║         CliniqAI — API CONTRACT FOR BACKEND          ║
+╚══════════════════════════════════════════════════════╝
+
+FILES YOUR TEAMMATE NEEDS:
+  cliniqai_model/
+  ├── model.pkl          (XGBoost model)
+  ├── scaler.pkl         (StandardScaler)
+  ├── shap_explainer.pkl (SHAP TreeExplainer)
+  ├── config.json        (all settings)
+  ├── demo_patients.json (5 demo profiles)
+  └── predict.py         (ready-to-use functions)
+
+══════════════════════════════════════════════════════
+
+ENDPOINT 1 — POST /predict
+Input JSON:
+{
+  "gender":          "Male" | "Female" | "Other",
+  "age":             18–80 (float),
+  "hypertension":    0 or 1,
+  "heart_disease":   0 or 1,
+  "smoking_history": "never"|"former"|"current"|"not current"|"ever"|"unknown",
+  "bmi":             10–60 (float),
+  "hba1c":           3.5–9.0 (float),
+  "blood_glucose":   80–300 (int)
+}
+
+Output JSON:
+{
+  "prediction":      "High Risk" | "Low Risk",
+  "risk_level":      "Critical" | "High" | "Moderate" | "Low",
+  "risk_probability": 0.0–100.0,
+  "threshold_used":  0.3,
+  "contributions": [
+    {
+      "feature":        "HbA1c Level",
+      "original_value": 7.2,
+      "shap_value":     9.1685,
+      "impact":         "increases risk",
+      "magnitude":      9.1685
+    },
+    ... (8 features total, sorted by magnitude)
+  ],
+  "clinical_context": {
+    "HbA1c Level":    {"value": 7.2, "status": "Diabetic", ...},
+    "Blood Glucose":  {"value": 200, "status": "Diabetic", ...},
+    "BMI":            {"value": 33.5, "status": "Obese", ...}
+  },
+  "top_factor":       "HbA1c Level",
+  "top_factor_value": 7.2
+}
+
+══════════════════════════════════════════════════════
+
+ENDPOINT 2 — POST /whatif
+Input JSON:
+{
+  "base_patient": { ...same as /predict input... },
+  "changes": {
+    "hba1c": 6.0,
+    "bmi": 28.0
+  }
+}
+
+Output JSON:
+{
+  "original": {"risk": 100.0, "level": "Critical"},
+  "modified": {"risk": 15.9, "level": "Low"},
+  "risk_change": -84.1,
+  "direction": "decreased",
+  "changed_features": ["hba1c", "bmi"],
+  "contributions": [...]
+}
+
+══════════════════════════════════════════════════════
+
+ENDPOINT 3 — GET /demo-patients
+Returns all 5 pre-computed demo patients
+Use for: loading demo profiles instantly in UI
+
+══════════════════════════════════════════════════════
+
+MODEL PERFORMANCE (tell judges):
+  Accuracy:  96.56%
+  AUC:       0.9741
+  Recall:    78.21% (diabetics caught)
+  Threshold: 0.3 (clinically optimized)
+  Dataset:   100,000 patients
+
+RISK LEVELS:
+  🟢 Low      — 0% to 30%
+  🟡 Moderate — 30% to 50%
+  🔴 High     — 50% to 70%
+  🔴 Critical — 70% to 100%

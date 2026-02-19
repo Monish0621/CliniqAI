@@ -1,0 +1,302 @@
+{
+  "Arjun": {
+    "prediction": "High Risk",
+    "risk_level": "Critical",
+    "risk_probability": 93.3,
+    "contributions": [
+      {
+        "feature": "Systolic BP",
+        "original_value": 170,
+        "shap_value": 1.6302,
+        "impact": "increases risk",
+        "magnitude": 1.6302
+      },
+      {
+        "feature": "Diastolic BP",
+        "original_value": 100,
+        "shap_value": 0.3793,
+        "impact": "increases risk",
+        "magnitude": 0.3793
+      },
+      {
+        "feature": "Physical Activity",
+        "original_value": "No",
+        "shap_value": 0.2817,
+        "impact": "increases risk",
+        "magnitude": 0.2817
+      },
+      {
+        "feature": "Age",
+        "original_value": 58,
+        "shap_value": 0.0959,
+        "impact": "increases risk",
+        "magnitude": 0.0959
+      },
+      {
+        "feature": "BMI",
+        "original_value": 32.0,
+        "shap_value": 0.0872,
+        "impact": "increases risk",
+        "magnitude": 0.0872
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Male",
+        "shap_value": 0.0856,
+        "impact": "increases risk",
+        "magnitude": 0.0856
+      },
+      {
+        "feature": "Smoking",
+        "original_value": "Yes",
+        "shap_value": 0.0855,
+        "impact": "increases risk",
+        "magnitude": 0.0855
+      },
+      {
+        "feature": "Alcohol",
+        "original_value": "Yes",
+        "shap_value": 0.0156,
+        "impact": "increases risk",
+        "magnitude": 0.0156
+      }
+    ],
+    "clinical_context": {
+      "Systolic BP": {
+        "value": 170,
+        "unit": "mmHg",
+        "normal": "< 120",
+        "elevated": "120-129",
+        "high": "\u2265 130",
+        "status": "High"
+      },
+      "Diastolic BP": {
+        "value": 100,
+        "unit": "mmHg",
+        "normal": "< 80",
+        "high": "\u2265 80",
+        "status": "High"
+      },
+      "BMI": {
+        "value": 32.0,
+        "unit": "kg/m\u00b2",
+        "normal": "18.5-24.9",
+        "overweight": "25-29.9",
+        "obese": "\u2265 30",
+        "status": "Obese"
+      }
+    },
+    "top_factor": "Systolic BP",
+    "top_factor_value": 170,
+    "patient_input": {
+      "gender": 2,
+      "age": 58,
+      "ap_hi": 170,
+      "ap_lo": 100,
+      "smoke": 1,
+      "alco": 1,
+      "active": 0,
+      "bmi": 32.0
+    }
+  },
+  "Kavya": {
+    "prediction": "Low Risk",
+    "risk_level": "Low",
+    "risk_probability": 5.5,
+    "contributions": [
+      {
+        "feature": "Systolic BP",
+        "original_value": 110,
+        "shap_value": -1.3418,
+        "impact": "decreases risk",
+        "magnitude": 1.3418
+      },
+      {
+        "feature": "Age",
+        "original_value": 30,
+        "shap_value": -1.2914,
+        "impact": "decreases risk",
+        "magnitude": 1.2914
+      },
+      {
+        "feature": "Diastolic BP",
+        "original_value": 70,
+        "shap_value": -0.1322,
+        "impact": "decreases risk",
+        "magnitude": 0.1322
+      },
+      {
+        "feature": "Physical Activity",
+        "original_value": "Yes",
+        "shap_value": -0.0612,
+        "impact": "decreases risk",
+        "magnitude": 0.0612
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Female",
+        "shap_value": -0.0527,
+        "impact": "decreases risk",
+        "magnitude": 0.0527
+      },
+      {
+        "feature": "BMI",
+        "original_value": 21.5,
+        "shap_value": 0.0372,
+        "impact": "increases risk",
+        "magnitude": 0.0372
+      },
+      {
+        "feature": "Smoking",
+        "original_value": "No",
+        "shap_value": 0.0164,
+        "impact": "increases risk",
+        "magnitude": 0.0164
+      },
+      {
+        "feature": "Alcohol",
+        "original_value": "No",
+        "shap_value": -0.0003,
+        "impact": "decreases risk",
+        "magnitude": 0.0003
+      }
+    ],
+    "clinical_context": {
+      "Systolic BP": {
+        "value": 110,
+        "unit": "mmHg",
+        "normal": "< 120",
+        "elevated": "120-129",
+        "high": "\u2265 130",
+        "status": "Normal"
+      },
+      "Diastolic BP": {
+        "value": 70,
+        "unit": "mmHg",
+        "normal": "< 80",
+        "high": "\u2265 80",
+        "status": "Normal"
+      },
+      "BMI": {
+        "value": 21.5,
+        "unit": "kg/m\u00b2",
+        "normal": "18.5-24.9",
+        "overweight": "25-29.9",
+        "obese": "\u2265 30",
+        "status": "Normal"
+      }
+    },
+    "top_factor": "Systolic BP",
+    "top_factor_value": 110,
+    "patient_input": {
+      "gender": 1,
+      "age": 30,
+      "ap_hi": 110,
+      "ap_lo": 70,
+      "smoke": 0,
+      "alco": 0,
+      "active": 1,
+      "bmi": 21.5
+    }
+  },
+  "Ravi": {
+    "prediction": "High Risk",
+    "risk_level": "Critical",
+    "risk_probability": 73.2,
+    "contributions": [
+      {
+        "feature": "Systolic BP",
+        "original_value": 135,
+        "shap_value": 0.5858,
+        "impact": "increases risk",
+        "magnitude": 0.5858
+      },
+      {
+        "feature": "Physical Activity",
+        "original_value": "No",
+        "shap_value": 0.1931,
+        "impact": "increases risk",
+        "magnitude": 0.1931
+      },
+      {
+        "feature": "Age",
+        "original_value": 48,
+        "shap_value": 0.1664,
+        "impact": "increases risk",
+        "magnitude": 0.1664
+      },
+      {
+        "feature": "BMI",
+        "original_value": 28.5,
+        "shap_value": 0.0626,
+        "impact": "increases risk",
+        "magnitude": 0.0626
+      },
+      {
+        "feature": "Smoking",
+        "original_value": "Yes",
+        "shap_value": -0.0235,
+        "impact": "decreases risk",
+        "magnitude": 0.0235
+      },
+      {
+        "feature": "Diastolic BP",
+        "original_value": 85,
+        "shap_value": 0.02,
+        "impact": "increases risk",
+        "magnitude": 0.02
+      },
+      {
+        "feature": "Alcohol",
+        "original_value": "No",
+        "shap_value": 0.0108,
+        "impact": "increases risk",
+        "magnitude": 0.0108
+      },
+      {
+        "feature": "Gender",
+        "original_value": "Male",
+        "shap_value": 0.0091,
+        "impact": "increases risk",
+        "magnitude": 0.0091
+      }
+    ],
+    "clinical_context": {
+      "Systolic BP": {
+        "value": 135,
+        "unit": "mmHg",
+        "normal": "< 120",
+        "elevated": "120-129",
+        "high": "\u2265 130",
+        "status": "High"
+      },
+      "Diastolic BP": {
+        "value": 85,
+        "unit": "mmHg",
+        "normal": "< 80",
+        "high": "\u2265 80",
+        "status": "High"
+      },
+      "BMI": {
+        "value": 28.5,
+        "unit": "kg/m\u00b2",
+        "normal": "18.5-24.9",
+        "overweight": "25-29.9",
+        "obese": "\u2265 30",
+        "status": "Overweight"
+      }
+    },
+    "top_factor": "Systolic BP",
+    "top_factor_value": 135,
+    "patient_input": {
+      "gender": 2,
+      "age": 48,
+      "ap_hi": 135,
+      "ap_lo": 85,
+      "smoke": 1,
+      "alco": 0,
+      "active": 0,
+      "bmi": 28.5
+    }
+  }
+}
