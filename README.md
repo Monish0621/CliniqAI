@@ -123,7 +123,7 @@ bash
      
 ```
 
-The backend will start at http://localhost:8000
+The backend will start at http://localhost:8001
 
 ### Frontend Setup
 
