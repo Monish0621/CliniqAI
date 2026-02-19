@@ -35,17 +35,48 @@ def load_diabetes_model():
     
     if _diabetes_model is None:
         try:
-            # Load model
-            with open(DIABETES_MODEL_DIR / "model.pkl", "rb") as f:
-                _diabetes_model = pickle.load(f)
+            # Try multiple methods to load the model
             
-            # Load scaler
-            with open(DIABETES_MODEL_DIR / "scaler.pkl", "rb") as f:
-                _diabetes_scaler = pickle.load(f)
+            # Method 1: Try with default pickle.load
+            try:
+                with open(DIABETES_MODEL_DIR / "model.pkl", "rb") as f:
+                    _diabetes_model = pickle.load(f)
+                print("Diabetes model loaded successfully with default pickle.load")
+            except Exception as e1:
+                print(f"Method 1 failed: {e1}")
+                # Method 2: Try with encoding='latin1' or 'bytes'
+                try:
+                    with open(DIABETES_MODEL_DIR / "model.pkl", "rb") as f:
+                        _diabetes_model = pickle.load(f, encoding='latin1')
+                    print("Diabetes model loaded successfully with encoding='latin1'")
+                except Exception as e2:
+                    print(f"Method 2 failed: {e2}")
+                    # Method 3: Try with fix_imports=True
+                    try:
+                        import pickle5
+                        with open(DIABETES_MODEL_DIR / "model.pkl", "rb") as f:
+                            _diabetes_model = pickle5.load(f)
+                        print("Diabetes model loaded successfully with pickle5")
+                    except Exception as e3:
+                        print(f"Method 3 failed: {e3}")
+                        raise Exception(f"All loading methods failed. Last error: {e3}")
+            
+            # Load scaler with similar fallback methods
+            try:
+                with open(DIABETES_MODEL_DIR / "scaler.pkl", "rb") as f:
+                    _diabetes_scaler = pickle.load(f, encoding='latin1')
+            except:
+                try:
+                    with open(DIABETES_MODEL_DIR / "scaler.pkl", "rb") as f:
+                        _diabetes_scaler = pickle.load(f)
+                except Exception as e:
+                    print(f"Warning: Could not load scaler: {e}")
+                    _diabetes_scaler = None
             
             # Load config
             with open(DIABETES_MODEL_DIR / "config.json", "r") as f:
                 _diabetes_config = json.load(f)
+                
         except Exception as e:
             print(f"Error loading diabetes model: {e}")
             _diabetes_load_error = True
@@ -63,17 +94,48 @@ def load_heart_model():
     
     if _heart_model is None:
         try:
-            # Load model
-            with open(HEART_MODEL_DIR / "heart_model.pkl", "rb") as f:
-                _heart_model = pickle.load(f)
+            # Try multiple methods to load the model
             
-            # Load scaler
-            with open(HEART_MODEL_DIR / "heart_scaler.pkl", "rb") as f:
-                _heart_scaler = pickle.load(f)
+            # Method 1: Try with default pickle.load
+            try:
+                with open(HEART_MODEL_DIR / "heart_model.pkl", "rb") as f:
+                    _heart_model = pickle.load(f)
+                print("Heart model loaded successfully with default pickle.load")
+            except Exception as e1:
+                print(f"Heart model Method 1 failed: {e1}")
+                # Method 2: Try with encoding='latin1' or 'bytes'
+                try:
+                    with open(HEART_MODEL_DIR / "heart_model.pkl", "rb") as f:
+                        _heart_model = pickle.load(f, encoding='latin1')
+                    print("Heart model loaded successfully with encoding='latin1'")
+                except Exception as e2:
+                    print(f"Heart model Method 2 failed: {e2}")
+                    # Method 3: Try with pickle5
+                    try:
+                        import pickle5
+                        with open(HEART_MODEL_DIR / "heart_model.pkl", "rb") as f:
+                            _heart_model = pickle5.load(f)
+                        print("Heart model loaded successfully with pickle5")
+                    except Exception as e3:
+                        print(f"Heart model Method 3 failed: {e3}")
+                        raise Exception(f"All heart loading methods failed. Last error: {e3}")
+            
+            # Load scaler with similar fallback methods
+            try:
+                with open(HEART_MODEL_DIR / "heart_scaler.pkl", "rb") as f:
+                    _heart_scaler = pickle.load(f, encoding='latin1')
+            except:
+                try:
+                    with open(HEART_MODEL_DIR / "heart_scaler.pkl", "rb") as f:
+                        _heart_scaler = pickle.load(f)
+                except Exception as e:
+                    print(f"Warning: Could not load heart scaler: {e}")
+                    _heart_scaler = None
             
             # Load config
             with open(HEART_MODEL_DIR / "heart_config.json", "r") as f:
                 _heart_config = json.load(f)
+                
         except Exception as e:
             print(f"Error loading heart model: {e}")
             _heart_load_error = True
@@ -317,11 +379,18 @@ def predict_diabetes(input_data: Dict[str, Any]) -> Tuple[float, float]:
     Make diabetes prediction
     Returns: (probability, threshold_adjusted_probability)
     """
-    model, _, config = load_diabetes_model()
+    model, scaler, config = load_diabetes_model()
     
     # Check if model is available
     if model is None:
         # Use fallback calculation
+        probability = calculate_diabetes_probability_fallback(input_data)
+        threshold = config.get("optimal_threshold", 0.3)
+        return probability, threshold
+    
+    # Check if scaler is available - if not, use fallback calculation
+    if scaler is None:
+        print("Warning: Scaler not available, using fallback calculation")
         probability = calculate_diabetes_probability_fallback(input_data)
         threshold = config.get("optimal_threshold", 0.3)
         return probability, threshold
@@ -343,11 +412,18 @@ def predict_heart_disease(input_data: Dict[str, Any]) -> Tuple[float, float]:
     Make heart disease prediction
     Returns: (probability, threshold_adjusted_probability)
     """
-    model, _, config = load_heart_model()
+    model, scaler, config = load_heart_model()
     
     # Check if model is available
     if model is None:
         # Use fallback calculation
+        probability = calculate_heart_probability_fallback(input_data)
+        threshold = config.get("optimal_threshold", 0.4)
+        return probability, threshold
+    
+    # Check if scaler is available - if not, use fallback calculation
+    if scaler is None:
+        print("Warning: Heart scaler not available, using fallback calculation")
         probability = calculate_heart_probability_fallback(input_data)
         threshold = config.get("optimal_threshold", 0.4)
         return probability, threshold
