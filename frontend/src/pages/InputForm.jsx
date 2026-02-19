@@ -107,6 +107,9 @@ export default function InputForm() {
 
       const response = await api.post(endpoint, apiData)
       
+      // Save prediction to localStorage as backup
+      localStorage.setItem('lastPrediction', JSON.stringify(response.data))
+      
       // Navigate to results with the prediction data
       navigate('/results', { 
         state: { 

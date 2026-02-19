@@ -56,8 +56,8 @@ def download_pdf_report(
     
     return Response(
         content=pdf_bytes,
-        media_type="text/plain",
+        media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=cliniqai_report_{prediction_id}.txt"
+            "Content-Disposition": f"attachment; filename=cliniqai_report_{prediction_id}.pdf"
         }
     )

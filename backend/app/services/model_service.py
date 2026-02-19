@@ -278,27 +278,39 @@ def calculate_diabetes_probability_fallback(data: Dict[str, Any]) -> float:
     # Clinical risk score based on known risk factors
     score = 0.0
     
-    # Age factor
-    age = float(data.get("age", 0))
+    # Age factor - safely handle None values
+    try:
+        age = float(data.get("age", 0)) if data.get("age") is not None else 0
+    except (ValueError, TypeError):
+        age = 0
     if age > 40:
         score += (age - 40) * 0.005
     
-    # BMI factor
-    bmi = float(data.get("bmi", 0))
+    # BMI factor - safely handle None values
+    try:
+        bmi = float(data.get("bmi", 0)) if data.get("bmi") is not None else 0
+    except (ValueError, TypeError):
+        bmi = 0
     if bmi > 25:
         score += (bmi - 25) * 0.01
     elif bmi < 18.5:
         score -= 0.02
     
-    # HbA1c factor (most important)
-    hba1c = float(data.get("HbA1c_level", 0))
+    # HbA1c factor (most important) - safely handle None values
+    try:
+        hba1c = float(data.get("HbA1c_level", 0)) if data.get("HbA1c_level") is not None else 0
+    except (ValueError, TypeError):
+        hba1c = 0
     if hba1c >= 6.5:
         score += 0.3
     elif hba1c >= 5.7:
         score += 0.15
     
-    # Blood glucose factor
-    glucose = float(data.get("blood_glucose_level", 0))
+    # Blood glucose factor - safely handle None values
+    try:
+        glucose = float(data.get("blood_glucose_level", 0)) if data.get("blood_glucose_level") is not None else 0
+    except (ValueError, TypeError):
+        glucose = 0
     if glucose >= 126:
         score += 0.25
     elif glucose >= 100:
@@ -327,20 +339,29 @@ def calculate_heart_probability_fallback(data: Dict[str, Any]) -> float:
     # Clinical risk score based on known risk factors
     score = 0.0
     
-    # Age factor
-    age = float(data.get("age", 0))
+    # Age factor - safely handle None values
+    try:
+        age = float(data.get("age", 0)) if data.get("age") is not None else 0
+    except (ValueError, TypeError):
+        age = 0
     if age > 50:
         score += (age - 50) * 0.008
     
-    # BMI factor
-    bmi = float(data.get("bmi", 0))
+    # BMI factor - safely handle None values
+    try:
+        bmi = float(data.get("bmi", 0)) if data.get("bmi") is not None else 0
+    except (ValueError, TypeError):
+        bmi = 0
     if bmi > 30:
         score += 0.15
     elif bmi > 25:
         score += 0.05
     
-    # Blood pressure factors (most important for heart disease)
-    ap_hi = float(data.get("ap_hi", 0))
+    # Blood pressure factors (most important for heart disease) - safely handle None values
+    try:
+        ap_hi = float(data.get("ap_hi", 0)) if data.get("ap_hi") is not None else 0
+    except (ValueError, TypeError):
+        ap_hi = 0
     if ap_hi >= 140:
         score += 0.25
     elif ap_hi >= 130:
@@ -348,7 +369,10 @@ def calculate_heart_probability_fallback(data: Dict[str, Any]) -> float:
     elif ap_hi >= 120:
         score += 0.05
     
-    ap_lo = float(data.get("ap_lo", 0))
+    try:
+        ap_lo = float(data.get("ap_lo", 0)) if data.get("ap_lo") is not None else 0
+    except (ValueError, TypeError):
+        ap_lo = 0
     if ap_lo >= 90:
         score += 0.15
     elif ap_lo >= 80:

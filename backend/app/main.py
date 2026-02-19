@@ -1,13 +1,17 @@
 """
 CliniqAI Main Application
 """
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from .config import CORS_ORIGINS
-from .database import init_db
-from .routers import auth, predictions, patients, reports
+from app.config import CORS_ORIGINS
+from app.database import init_db
+from app.routers import auth, predictions, patients, reports
 
 
 @asynccontextmanager

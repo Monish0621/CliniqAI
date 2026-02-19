@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { 
-  Activity, Heart, Download, RefreshCw, TrendingUp, 
-  TrendingDown, Minus, AlertCircle, Info 
-} from 'lucide-react'
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, XAxis as XAxis2, YAxis as YAxis2 
-} from 'recharts'
+import { Activity, Heart, Download, RefreshCw, AlertCircle, Info } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { predictionsAPI, reportsAPI } from '../api'
 
 export default function Results() {
@@ -17,9 +11,9 @@ export default function Results() {
   const { prediction: initialPrediction, disease, patientName, inputData } = location.state || {}
 
   const [prediction, setPrediction] = useState(initialPrediction)
+  const [predictionId, setPredictionId] = useState(null)
   const [whatIfData, setWhatIfData] = useState(inputData || {})
   const [loading, setLoading] = useState(false)
-  const [history, setHistory] = useState([])
 
   const diseaseName = disease === 'diabetes' ? 'Diabetes' : 'Heart Disease'
   const Icon = disease === 'diabetes' ? Activity : Heart
@@ -27,6 +21,14 @@ export default function Results() {
   useEffect(() => {
     if (initialPrediction) {
       setWhatIfData(inputData)
+      const id = initialPrediction?.id || JSON.parse(localStorage.getItem('lastPrediction') || '{}').id || null
+      setPredictionId(id)
+    } else {
+      const saved = JSON.parse(localStorage.getItem('lastPrediction') || '{}')
+      if (saved && saved.id) {
+        setPrediction(saved)
+        setPredictionId(saved.id)
+      }
     }
   }, [initialPrediction, inputData])
 
@@ -34,12 +36,11 @@ export default function Results() {
     const newData = { ...whatIfData, [field]: value }
     setWhatIfData(newData)
     
-    // Debounce API call
     clearTimeout(window.whatIfTimeout)
     window.whatIfTimeout = setTimeout(async () => {
       setLoading(true)
       try {
-      const response = await predictionsAPI.whatIf({
+        const response = await predictionsAPI.whatIf({
           disease_type: disease,
           input_data: newData
         })
@@ -72,26 +73,27 @@ export default function Results() {
     }
   }
 
-  const getTrendIcon = (trend) => {
-    switch (trend) {
-      case 'increasing': return <TrendingUp className="w-5 h-5 text-rose-400" />
-      case 'decreasing': return <TrendingDown className="w-5 h-5 text-emerald-400" />
-      default: return <Minus className="w-5 h-5 text-slate-400" />
-    }
-  }
-
   const handleDownload = async () => {
+    const predId = prediction?.id || predictionId
+    
+    if (!predId) {
+      alert('Please make a new prediction to generate a report')
+      return
+    }
+    
     try {
-      const response = await reportsAPI.downloadPDF(prediction.id)
+      const response = await reportsAPI.downloadPDF(predId)
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `cliniqai_report_${prediction.id}.pdf`)
+      link.setAttribute('download', `cliniqai_report_${predId}.pdf`)
       document.body.appendChild(link)
       link.click()
       link.remove()
+      window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Download error:', error)
+      alert('Failed to download report. Please try again.')
     }
   }
 
@@ -148,7 +150,6 @@ export default function Results() {
         animate={{ opacity: 1 }}
         className="max-w-7xl mx-auto"
       >
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -183,9 +184,7 @@ export default function Results() {
           </div>
         </div>
 
-        {/* Main Content - Split Layout */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* LEFT: What-If Simulator */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -233,9 +232,7 @@ export default function Results() {
             )}
           </motion.div>
 
-          {/* RIGHT: Results */}
           <div className="space-y-6">
-            {/* Risk Gauge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -246,29 +243,16 @@ export default function Results() {
               
               <div className="flex items-center justify-center mb-6">
                 <div className="relative w-48 h-48">
-                  {/* Background circle */}
                   <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="96" cy="96" r="80" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="12" />
                     <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.1)"
-                      strokeWidth="12"
-                    />
-                    <circle
-                      cx="96"
-                      cy="96"
-                      r="80"
-                      fill="none"
-                      className={`${getRiskBgColor(prediction.risk_category)}`}
-                      strokeWidth="12"
-                      strokeLinecap="round"
+                      cx="96" cy="96" r="80" fill="none"
+                      className={getRiskBgColor(prediction.risk_category)}
+                      strokeWidth="12" strokeLinecap="round"
                       strokeDasharray={`${riskProb * 5.02} 502`}
                       style={{ transition: 'stroke-dasharray 1s ease-out' }}
                     />
                   </svg>
-                  {/* Center text */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.span
                       initial={{ scale: 0 }}
@@ -282,7 +266,6 @@ export default function Results() {
                 </div>
               </div>
 
-              {/* Confidence Interval */}
               <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-slate-400 text-sm">Confidence Interval</span>
@@ -293,15 +276,11 @@ export default function Results() {
                     initial={{ width: 0 }}
                     animate={{ width: '100%' }}
                     className={`h-full ${getRiskBgColor(prediction.risk_category)}`}
-                    style={{ 
-                      marginLeft: `${ciLow}%`, 
-                      width: `${ciHigh - ciLow}%` 
-                    }}
+                    style={{ marginLeft: `${ciLow}%`, width: `${ciHigh - ciLow}%` }}
                   />
                 </div>
               </div>
 
-              {/* Risk Category Badge */}
               <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${getRiskBgColor(prediction.risk_category)} bg-opacity-20`}>
                 <span className={`font-semibold ${getRiskColor(prediction.risk_category)}`}>
                   {prediction.risk_category} Risk
@@ -309,7 +288,6 @@ export default function Results() {
               </div>
             </motion.div>
 
-            {/* SHAP Values */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -326,31 +304,14 @@ export default function Results() {
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                     <XAxis type="number" stroke="#94a3b8" />
-                    <YAxis 
-                      dataKey="feature" 
-                      type="category" 
-                      stroke="#94a3b8"
-                      width={70}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#1e293b',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Bar 
-                      dataKey="value" 
-                      fill="#0ea5e9"
-                      radius={[0, 4, 4, 0]}
-                    />
+                    <YAxis dataKey="feature" type="category" stroke="#94a3b8" width={70} tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                    <Bar dataKey="value" fill="#0ea5e9" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </motion.div>
 
-            {/* Clinical Explanation */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -366,7 +327,6 @@ export default function Results() {
               </p>
             </motion.div>
 
-            {/* Risk Trajectory Placeholder */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

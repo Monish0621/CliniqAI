@@ -153,6 +153,15 @@ def generate_shap_values_heart(input_data: Dict[str, Any]) -> List[Dict[str, Any
         return generate_simulated_shap_values_heart(input_data, config)
 
 
+# Helper function to safely get float values
+def safe_float(val, default=0):
+    """Safely convert a value to float"""
+    try:
+        return float(val) if val is not None else default
+    except (ValueError, TypeError):
+        return default
+
+
 def generate_simulated_shap_values(input_data: Dict[str, Any], config: dict) -> List[Dict[str, Any]]:
     """Generate simulated SHAP values based on clinical relevance"""
     feature_names = config.get("feature_names_display", [])
@@ -160,10 +169,10 @@ def generate_simulated_shap_values(input_data: Dict[str, Any], config: dict) -> 
     
     # Clinical relevance mapping (simplified simulation)
     clinical_factors = {
-        "HbA1c_level": ("HbA1c Level", lambda x: (float(x.get("HbA1c_level", 0)) - 5.7) * 0.1 if float(x.get("HbA1c_level", 0)) > 5.7 else -0.05),
-        "blood_glucose_level": ("Blood Glucose", lambda x: (float(x.get("blood_glucose_level", 0)) - 100) * 0.002 if float(x.get("blood_glucose_level", 0)) > 100 else -0.03),
-        "bmi": ("BMI", lambda x: (float(x.get("bmi", 0)) - 25) * 0.01 if float(x.get("bmi", 0)) > 25 else -0.02),
-        "age": ("Age", lambda x: (float(x.get("age", 0)) - 40) * 0.003 if float(x.get("age", 0)) > 40 else -0.01),
+        "HbA1c_level": ("HbA1c Level", lambda x: (safe_float(x.get("HbA1c_level"), 0) - 5.7) * 0.1 if safe_float(x.get("HbA1c_level"), 0) > 5.7 else -0.05),
+        "blood_glucose_level": ("Blood Glucose", lambda x: (safe_float(x.get("blood_glucose_level"), 0) - 100) * 0.002 if safe_float(x.get("blood_glucose_level"), 0) > 100 else -0.03),
+        "bmi": ("BMI", lambda x: (safe_float(x.get("bmi"), 0) - 25) * 0.01 if safe_float(x.get("bmi"), 0) > 25 else -0.02),
+        "age": ("Age", lambda x: (safe_float(x.get("age"), 0) - 40) * 0.003 if safe_float(x.get("age"), 0) > 40 else -0.01),
         "hypertension": ("Hypertension", lambda x: 0.08 if x.get("hypertension", False) else -0.02),
         "heart_disease": ("Heart Disease", lambda x: 0.06 if x.get("heart_disease", False) else -0.01),
         "smoking_history_encoded": ("Smoking", lambda x: 0.04 if x.get("smoking_history") in ["current", "former"] else -0.01),
@@ -196,10 +205,10 @@ def generate_simulated_shap_values_heart(input_data: Dict[str, Any], config: dic
     feature_names = config.get("feature_names_display", [])
     
     clinical_factors = {
-        "ap_hi": ("Systolic BP", lambda x: ((float(x.get("ap_hi", 0)) - 120) * 0.003 if float(x.get("ap_hi", 0)) > 120 else -0.02)),
-        "ap_lo": ("Diastolic BP", lambda x: ((float(x.get("ap_lo", 0)) - 80) * 0.003 if float(x.get("ap_lo", 0)) > 80 else -0.02)),
-        "bmi": ("BMI", lambda x: ((float(x.get("bmi", 0)) - 25) * 0.01 if float(x.get("bmi", 0)) > 25 else -0.02)),
-        "age": ("Age", lambda x: ((float(x.get("age", 0)) - 50) * 0.004 if float(x.get("age", 0)) > 50 else -0.01)),
+        "ap_hi": ("Systolic BP", lambda x: ((safe_float(x.get("ap_hi"), 0) - 120) * 0.003 if safe_float(x.get("ap_hi"), 0) > 120 else -0.02)),
+        "ap_lo": ("Diastolic BP", lambda x: ((safe_float(x.get("ap_lo"), 0) - 80) * 0.003 if safe_float(x.get("ap_lo"), 0) > 80 else -0.02)),
+        "bmi": ("BMI", lambda x: ((safe_float(x.get("bmi"), 0) - 25) * 0.01 if safe_float(x.get("bmi"), 0) > 25 else -0.02)),
+        "age": ("Age", lambda x: ((safe_float(x.get("age"), 0) - 50) * 0.004 if safe_float(x.get("age"), 0) > 50 else -0.01)),
         "smoke": ("Smoking", lambda x: (0.08 if x.get("smoke", False) else -0.02)),
         "active": ("Physical Activity", lambda x: (-0.05 if x.get("active", False) else 0.02)),
         "alco": ("Alcohol", lambda x: (0.03 if x.get("alco", False) else -0.01)),
@@ -255,9 +264,9 @@ def generate_clinical_explanation(
     """Generate plain-English clinical explanation"""
     
     if disease_type == "diabetes":
-        hba1c = input_data.get("HbA1c_level", 0)
-        glucose = input_data.get("blood_glucose_level", 0)
-        bmi = input_data.get("bmi", 0)
+        hba1c = safe_float(input_data.get("HbA1c_level", 0))
+        glucose = safe_float(input_data.get("blood_glucose_level", 0))
+        bmi_val = safe_float(input_data.get("bmi", 0))
         
         explanation = f"Based on the clinical inputs, this patient has a {probability*100:.1f}% risk of developing Type 2 Diabetes. "
         
@@ -266,12 +275,22 @@ def generate_clinical_explanation(
             explanation += f"The HbA1c level of {hba1c}% is in the diabetic range, which is a significant indicator. "
         elif hba1c >= 5.7:
             explanation += f"The HbA1c level of {hba1c}% indicates prediabetes. "
+        else:
+            explanation += f"The HbA1c level of {hba1c}% is in the normal range. "
         
         if glucose >= 126:
-            explanation += f"Blood glucose level of {glucose} mg/dL is elevated. "
+            explanation += f"Blood glucose level of {glucose} mg/dL is elevated (diabetic range). "
+        elif glucose >= 100:
+            explanation += f"Blood glucose level of {glucose} mg/dL is in the prediabetic range. "
+        else:
+            explanation += f"Blood glucose level of {glucose} mg/dL is in the normal range. "
         
-        if bmi >= 30:
-            explanation += f"BMI of {bmi} falls in the obese range, increasing diabetes risk. "
+        if bmi_val >= 30:
+            explanation += f"BMI of {bmi_val} falls in the obese range, increasing diabetes risk. "
+        elif bmi_val >= 25:
+            explanation += f"BMI of {bmi_val} falls in the overweight range. "
+        else:
+            explanation += f"BMI of {bmi_val} is in the healthy range. "
         
         # Top risk factors from SHAP
         if shap_values:
@@ -283,8 +302,9 @@ def generate_clinical_explanation(
         explanation += "This assessment should be used alongside other clinical findings for diagnosis."
         
     else:  # heart disease
-        ap_hi = input_data.get("ap_hi", 0)
-        bmi = input_data.get("bmi", 0)
+        ap_hi = safe_float(input_data.get("ap_hi", 0))
+        ap_lo = safe_float(input_data.get("ap_lo", 0))
+        bmi_val = safe_float(input_data.get("bmi", 0))
         smoke = input_data.get("smoke", False)
         
         explanation = f"Based on the provided clinical data, this patient has a {probability*100:.1f}% risk of cardiovascular disease. "
@@ -293,12 +313,23 @@ def generate_clinical_explanation(
             explanation += f"Systolic blood pressure of {ap_hi} mmHg is elevated (hypertension stage). "
         elif ap_hi >= 130:
             explanation += f"Systolic blood pressure of {ap_hi} mmHg is elevated. "
+        else:
+            explanation += f"Systolic blood pressure of {ap_hi} mmHg is in the normal range. "
         
-        if bmi >= 30:
-            explanation += f"BMI of {bmi} indicates obesity, a known cardiovascular risk factor. "
+        if ap_lo >= 90:
+            explanation += f"Diastolic blood pressure of {ap_lo} mmHg is elevated. "
+        
+        if bmi_val >= 30:
+            explanation += f"BMI of {bmi_val} indicates obesity, a known cardiovascular risk factor. "
+        elif bmi_val >= 25:
+            explanation += f"BMI of {bmi_val} indicates overweight. "
+        else:
+            explanation += f"BMI of {bmi_val} is in the healthy range. "
         
         if smoke:
             explanation += "Smoking is a major risk factor for heart disease. "
+        else:
+            explanation += "Non-smoking status is protective against heart disease. "
         
         if shap_values:
             top_factors = [s for s in shap_values if s["value"] > 0][:3]
