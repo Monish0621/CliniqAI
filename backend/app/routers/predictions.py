@@ -30,6 +30,9 @@ def predict_diabetes(
     # Convert input to dict
     data = input_data.model_dump()
     
+    # Get patient name from input
+    patient_name = data.pop('patient_name', 'Unknown Patient')
+    
     # Get prediction
     probability, threshold = model_service.predict_diabetes(data)
     
@@ -52,9 +55,21 @@ def predict_diabetes(
         "diabetes", probability, shap_values, data
     )
     
-    # Create prediction record
+    # Create patient record first
+    patient_record = PatientRecord(
+        user_id=current_user.id,
+        patient_name=patient_name,
+        disease_type="diabetes",
+        input_data=data
+    )
+    db.add(patient_record)
+    db.commit()
+    db.refresh(patient_record)
+    
+    # Create prediction record with patient_record_id
     prediction = Prediction(
         user_id=current_user.id,
+        patient_record_id=patient_record.id,
         disease_type="diabetes",
         risk_probability=probability,
         risk_category=risk_category,
@@ -91,6 +106,9 @@ def predict_heart_disease(
     # Convert input to dict
     data = input_data.model_dump()
     
+    # Get patient name from input
+    patient_name = data.pop('patient_name', 'Unknown Patient')
+    
     # Get prediction
     probability, threshold = model_service.predict_heart_disease(data)
     
@@ -113,9 +131,21 @@ def predict_heart_disease(
         "heart_disease", probability, shap_values, data
     )
     
-    # Create prediction record
+    # Create patient record first
+    patient_record = PatientRecord(
+        user_id=current_user.id,
+        patient_name=patient_name,
+        disease_type="heart_disease",
+        input_data=data
+    )
+    db.add(patient_record)
+    db.commit()
+    db.refresh(patient_record)
+    
+    # Create prediction record with patient_record_id
     prediction = Prediction(
         user_id=current_user.id,
+        patient_record_id=patient_record.id,
         disease_type="heart_disease",
         risk_probability=probability,
         risk_category=risk_category,
@@ -182,6 +212,43 @@ def what_if_prediction(
         clinical_explanation=clinical_explanation,
         disease_type=request.disease_type
     )
+
+
+@router.get("/history")
+def get_prediction_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get prediction history - doctors see all, patients see their own"""
+    if current_user.role == "doctor":
+        predictions = db.query(Prediction).order_by(Prediction.created_at.desc()).all()
+    else:
+        predictions = db.query(Prediction).filter(
+            Prediction.user_id == current_user.id
+        ).order_by(Prediction.created_at.desc()).all()
+    
+    # Add patient name to each prediction
+    result = []
+    for p in predictions:
+        patient_name = "Unknown Patient"
+        if p.patient_record_id:
+            patient_record = db.query(PatientRecord).filter(PatientRecord.id == p.patient_record_id).first()
+            if patient_record:
+                patient_name = patient_record.patient_name
+        
+        pred_dict = {
+            "id": p.id,
+            "risk_probability": p.risk_probability,
+            "risk_category": p.risk_category,
+            "confidence_interval_low": p.confidence_interval_low,
+            "confidence_interval_high": p.confidence_interval_high,
+            "disease_type": p.disease_type,
+            "created_at": p.created_at,
+            "patient_name": patient_name
+        }
+        result.append(pred_dict)
+    
+    return result
 
 
 @router.get("/info/{disease_type}", response_model=ModelInfoResponse)

@@ -40,7 +40,8 @@ export const predictionsAPI = {
   predictDiabetes: (data) => api.post('/api/v1/predictions/diabetes', data),
   predictHeartDisease: (data) => api.post('/api/v1/predictions/heart_disease', data),
   whatIf: (data) => api.post('/api/v1/predictions/what-if', data),
-  getModelInfo: (diseaseType) => api.get(`/api/v1/predictions/info/${diseaseType}`)
+  getModelInfo: (diseaseType) => api.get(`/api/v1/predictions/info/${diseaseType}`),
+  getHistory: () => api.get('/api/v1/predictions/history')
 }
 
 // Patients API

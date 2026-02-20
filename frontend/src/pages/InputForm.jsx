@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Activity, Heart, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react'
+import { Activity, Heart, ArrowLeft, ArrowRight } from 'lucide-react'
 import api from '../api'
 
 export default function InputForm() {
@@ -41,7 +41,6 @@ export default function InputForm() {
   const Icon = disease === 'diabetes' ? Activity : Heart
 
   useEffect(() => {
-    // Initialize form with default values
     const initialData = {}
     fields.forEach(field => {
       if (field.type === 'number') {
@@ -55,7 +54,6 @@ export default function InputForm() {
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value })
-    // Clear error when user types
     if (errors[name]) {
       setErrors({ ...errors, [name]: null })
     }
@@ -63,6 +61,11 @@ export default function InputForm() {
 
   const validate = () => {
     const newErrors = {}
+    
+    if (!patientName || patientName.trim() === '') {
+      newErrors.patientName = 'Patient Name is required'
+    }
+    
     fields.forEach(field => {
       if (field.required && !formData[field.name]) {
         newErrors[field.name] = `${field.label} is required`
@@ -88,10 +91,8 @@ export default function InputForm() {
 
     setLoading(true)
     try {
-      // Convert form data to API format
       const apiData = { ...formData }
       
-      // Convert string booleans to actual booleans
       fields.forEach(field => {
         if (field.type === 'select') {
           const options = field.options
@@ -101,21 +102,25 @@ export default function InputForm() {
         }
       })
 
+      // Include patient name in the API data
+      const apiDataWithName = {
+        ...apiData,
+        patient_name: patientName.trim()
+      }
+
       const endpoint = disease === 'diabetes' 
         ? '/api/v1/predictions/diabetes'
         : '/api/v1/predictions/heart_disease'
 
-      const response = await api.post(endpoint, apiData)
+      const response = await api.post(endpoint, apiDataWithName)
       
-      // Save prediction to localStorage as backup
       localStorage.setItem('lastPrediction', JSON.stringify(response.data))
       
-      // Navigate to results with the prediction data
       navigate('/results', { 
         state: { 
           prediction: response.data, 
           disease,
-          patientName: patientName || 'Patient',
+          patientName: patientName.trim(),
           inputData: formData
         } 
       })
@@ -134,7 +139,6 @@ export default function InputForm() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 mb-4">
             <Icon className="w-7 h-7 text-white" />
@@ -143,21 +147,28 @@ export default function InputForm() {
           <p className="text-slate-400">Please enter the clinical information below</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-8">
-          {/* Patient Name */}
           <div className="mb-6">
-            <label className="block text-slate-300 text-sm font-medium mb-2">Patient Name (Optional)</label>
+            <label className="block text-slate-300 text-sm font-medium mb-2">
+              Patient Name <span className="text-red-400">*</span>
+            </label>
             <input
               type="text"
               value={patientName}
-              onChange={(e) => setPatientName(e.target.value)}
+              onChange={(e) => {
+                setPatientName(e.target.value)
+                if (errors.patientName) {
+                  setErrors({ ...errors, patientName: null })
+                }
+              }}
               className="w-full bg-slate-800/50 border border-slate-700 rounded-lg py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
               placeholder="Enter patient name"
             />
+            {errors.patientName && (
+              <p className="text-red-400 text-xs mt-1">{errors.patientName}</p>
+            )}
           </div>
 
-          {/* Form Fields */}
           <div className="grid md:grid-cols-2 gap-6">
             {fields.map((field, index) => (
               <motion.div
@@ -207,7 +218,6 @@ export default function InputForm() {
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex justify-between mt-8">
             <motion.button
               type="button"

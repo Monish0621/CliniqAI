@@ -49,6 +49,7 @@ class DiabetesPredictionInput(BaseModel):
     bmi: float = Field(..., ge=10, le=100)
     HbA1c_level: float = Field(..., ge=3, le=15)
     blood_glucose_level: float = Field(..., ge=50, le=500)
+    patient_name: Optional[str] = None
 
 
 class HeartPredictionInput(BaseModel):
@@ -60,6 +61,7 @@ class HeartPredictionInput(BaseModel):
     alco: bool
     active: bool
     bmi: float = Field(..., ge=10, le=100)
+    patient_name: Optional[str] = None
 
 
 # Prediction Output Schemas

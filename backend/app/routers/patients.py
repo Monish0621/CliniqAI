@@ -25,10 +25,15 @@ def get_patients(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get all patient records for current user"""
-    patients = db.query(PatientRecord).filter(
-        PatientRecord.user_id == current_user.id
-    ).order_by(PatientRecord.created_at.desc()).all()
+    """Get all patient records - doctors see all, patients see their own"""
+    if current_user.role == "doctor":
+        # Doctors can see all patient records
+        patients = db.query(PatientRecord).order_by(PatientRecord.created_at.desc()).all()
+    else:
+        # Patients can only see their own records
+        patients = db.query(PatientRecord).filter(
+            PatientRecord.user_id == current_user.id
+        ).order_by(PatientRecord.created_at.desc()).all()
     
     return patients
 
@@ -78,17 +83,26 @@ def compare_patients(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Compare two patient records"""
-    # Get both records
-    record1 = db.query(PatientRecord).filter(
-        PatientRecord.id == request.record_id_1,
-        PatientRecord.user_id == current_user.id
-    ).first()
-    
-    record2 = db.query(PatientRecord).filter(
-        PatientRecord.id == request.record_id_2,
-        PatientRecord.user_id == current_user.id
-    ).first()
+    """Compare two patient records - doctors can compare any, patients can only compare their own"""
+    # Doctors can compare any patients, patients can only compare their own
+    if current_user.role == "doctor":
+        record1 = db.query(PatientRecord).filter(
+            PatientRecord.id == request.record_id_1
+        ).first()
+        
+        record2 = db.query(PatientRecord).filter(
+            PatientRecord.id == request.record_id_2
+        ).first()
+    else:
+        record1 = db.query(PatientRecord).filter(
+            PatientRecord.id == request.record_id_1,
+            PatientRecord.user_id == current_user.id
+        ).first()
+        
+        record2 = db.query(PatientRecord).filter(
+            PatientRecord.id == request.record_id_2,
+            PatientRecord.user_id == current_user.id
+        ).first()
     
     if not record1 or not record2:
         raise HTTPException(status_code=404, detail="Patient record not found")
